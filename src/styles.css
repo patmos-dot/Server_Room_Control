@@ -1,0 +1,136 @@
+@font-face { font-family: Poppins; font-weight: 400; font-display: swap; src: url(/fonts/poppins-400.woff2) format('woff2'); }
+@font-face { font-family: Poppins; font-weight: 500; font-display: swap; src: url(/fonts/poppins-500.woff2) format('woff2'); }
+@font-face { font-family: Poppins; font-weight: 600; font-display: swap; src: url(/fonts/poppins-600.woff2) format('woff2'); }
+@font-face { font-family: Poppins; font-weight: 700; font-display: swap; src: url(/fonts/poppins-700.woff2) format('woff2'); }
+
+/* Isomo brand tokens (Isomo Design Kit) */
+:root {
+  --green: #8cc63e;
+  --blue: #1dafec;
+  --gold: #efb34a;
+  --charcoal: #4a4b4c;
+  --head: #414243;      /* email header grey */
+  --ink: #2f3032;
+  --muted: #6b6d70;
+  --line: #d5d7da;
+  --page: #f1f2f0;
+  --error: #c8412f;
+  --brand-gradient: linear-gradient(90deg, var(--blue), var(--green));
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: Poppins, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: var(--ink);
+  background: var(--page);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { min-height: 100vh; padding: 28px 14px 40px; display: flex; justify-content: center; }
+.card {
+  width: 100%; max-width: 640px; background: #fff;
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.07);
+  align-self: flex-start;
+}
+
+/* Header: charcoal band with white wordmark, then blue-to-green strip */
+.card-head { background: var(--head); padding: 26px 32px 18px; }
+.logo { display: block; height: 40px; width: auto; }
+.tagline { margin: 10px 0 0; color: #fff; opacity: .85; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; font-weight: 500; }
+.strip { height: 6px; background: var(--brand-gradient); }
+
+.body { padding: 30px 32px 10px; }
+h1 { font-size: 26px; font-weight: 700; margin: 0 0 10px; color: var(--ink); }
+.intro { margin: 0 0 8px; font-size: 15px; line-height: 1.6; }
+.muted { color: var(--muted); font-size: 14px; }
+
+/* Fields */
+.field { margin: 28px 0 0; border: 0; padding: 0; min-width: 0; }
+.label { display: block; font-weight: 600; font-size: 16.5px; margin-bottom: 4px; padding: 0; }
+.req { color: var(--error); margin-left: 3px; }
+.hint { margin: 0 0 10px; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+
+input[type='text'], input[type='email'], textarea {
+  width: 100%; font: inherit; font-size: 16px; /* 16px stops iPhone zooming in */
+  color: var(--ink); background: #fff;
+  border: 1.5px solid var(--line); border-radius: 8px;
+  padding: 12px 14px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(29,175,236,.18); }
+[aria-invalid='true'] input, input[aria-invalid='true'], textarea[aria-invalid='true'] { border-color: var(--error); }
+.error { color: var(--error); font-size: 13.5px; margin: 6px 0 0; }
+.banner { background: #fdf0ee; border-radius: 8px; padding: 12px 14px; margin-top: 24px; }
+
+/* Yes / No */
+.choices { display: flex; gap: 10px; margin-top: 8px; }
+.choice {
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+  padding: 11px 22px 11px 14px; border-radius: 10px;
+  background: #f4f5f6; border: 1.5px solid transparent; font-size: 15px;
+  transition: background .15s, border-color .15s;
+}
+.choice input { accent-color: var(--green); width: 18px; height: 18px; margin: 0; }
+.choice.on { background: #f1f8e8; border-color: var(--green); font-weight: 500; }
+
+/* Laptop section: shown only when "Yes" */
+.laptop-box {
+  margin-top: 22px; padding: 4px 20px 22px;
+  border-left: 4px solid var(--gold); background: #fffaf1; border-radius: 0 10px 10px 0;
+}
+.laptop-box .field:first-child { margin-top: 18px; }
+.serial-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.serial-num {
+  flex: 0 0 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--blue); color: var(--charcoal);
+  font-size: 12px; font-weight: 700; display: grid; place-items: center;
+}
+.serial-row:nth-child(3n+1) .serial-num { border-color: var(--green); }
+.serial-row:nth-child(3n+2) .serial-num { border-color: var(--gold); }
+.serial-row input { text-transform: uppercase; letter-spacing: .04em; }
+.icon-btn {
+  flex: 0 0 38px; height: 38px; border-radius: 8px; border: 0; cursor: pointer;
+  background: #eeeff0; color: var(--muted); font-size: 22px; line-height: 1;
+}
+.icon-btn:hover { background: #e3e4e6; color: var(--ink); }
+
+/* Buttons */
+.btn { font: inherit; cursor: pointer; border-radius: 8px; border: 0; }
+.btn-primary {
+  background: var(--brand-gradient); color: #fff; font-weight: 600; font-size: 17px;
+  padding: 14px 40px; transition: filter .15s, transform .05s;
+}
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:disabled { opacity: .6; cursor: wait; }
+.btn-add { background: none; color: #0f8fc6; font-weight: 600; font-size: 14.5px; padding: 6px 0; margin-left: 38px; }
+.btn-ghost { background: #fff; border: 1.5px solid var(--line); padding: 11px 22px; font-weight: 500; margin-top: 8px; }
+.actions { margin: 32px 0 26px; display: flex; justify-content: flex-end; }
+
+/* Success screen */
+.done { text-align: center; padding-top: 40px; padding-bottom: 36px; }
+.done-ring { width: 64px; height: 64px; margin-bottom: 10px; }
+.done p { font-size: 15.5px; line-height: 1.6; margin: 0 0 12px; }
+
+/* Footer */
+.card-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid #ececec; padding: 14px 32px;
+  font-style: italic; font-size: 13px; color: var(--muted);
+}
+.card-foot img { width: 26px; height: 26px; }
+
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+@media (max-width: 520px) {
+  .page { padding: 0; background: #fff; }
+  .card { border-radius: 0; box-shadow: none; }
+  .card-head, .body, .card-foot { padding-left: 20px; padding-right: 20px; }
+  .logo { height: 34px; }
+  h1 { font-size: 23px; }
+  .actions .btn-primary { width: 100%; }
+  .laptop-box { padding-left: 14px; padding-right: 14px; }
+}
