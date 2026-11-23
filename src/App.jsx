@@ -8,6 +8,10 @@ const EMPTY = {
   takingLaptops: null, // null = not answered yet, true / false once chosen
   serials: [''],
   laptopReason: '',
+  returningLaptops: null, // null = not answered yet
+  returnedCount: '',
+  returnedCondition: '', // 'all_working' | 'some_need_repair' | 'all_need_repair'
+  repairNotes: '',
   website: '', // honeypot: real people never see or fill this
 };
 
@@ -25,6 +29,14 @@ function validate(f) {
     if (serials.some((s) => !s)) e.serials = 'Fill in every serial number, or remove the empty one.';
     else if (new Set(serials).size !== serials.length) e.serials = 'The same serial number is listed twice.';
     if (f.laptopReason.trim().length < 3) e.laptopReason = 'Tell us why you are taking the laptop(s).';
+  }
+  if (f.returningLaptops === null) e.returningLaptops = 'Please choose Yes or No.';
+  if (f.returningLaptops) {
+    const n = Number(f.returnedCount);
+    if (!Number.isInteger(n) || n < 1 || n > 50) e.returnedCount = 'Type how many laptops you are bringing back (1 to 50).';
+    if (!f.returnedCondition) e.returnedCondition = 'Tell us if the laptops work or need repair.';
+    else if (n === 1 && f.returnedCondition === 'some_need_repair')
+      e.returnedCondition = 'For one laptop, choose "It works" or "It needs repair".';
   }
   return e;
 }
@@ -67,6 +79,13 @@ export default function App() {
       laptop_serials: form.takingLaptops ? form.serials.map(cleanSerial) : [],
       laptop_reason: form.takingLaptops ? form.laptopReason.trim() : null,
       // no timestamp here on purpose: the database stamps submitted_at itself
+        returning_laptops: form.returningLaptops,
+      returned_count: form.returningLaptops ? Number(form.returnedCount) : null,
+      returned_condition: form.returningLaptops ? form.returnedCondition : null,
+      repair_notes:
+        form.returningLaptops && form.returnedCondition !== 'all_working' && form.repairNotes.trim()
+          ? form.repairNotes.trim()
+          : null,
     };
 
     const { error } = await supabase.from('control_room_entries').insert(row);
@@ -148,7 +167,7 @@ export default function App() {
             </Field>
 
             <Field id="activity" label="What are you about to do in the control room?"
-              hint="For example: collect a laptop for class, return a projector, fix the printer, attend a meeting."
+              hint="For example: collect a laptop for a circles, or return laptops for repair"
               error={errors.activity}>
               <textarea id="activity" rows={3} maxLength={2000}
                 value={form.activity} onChange={set('activity')}
@@ -208,6 +227,73 @@ export default function App() {
                     value={form.laptopReason} onChange={set('laptopReason')}
                     aria-invalid={!!errors.laptopReason} />
                 </Field>
+              </div>
+            )}
+
+              {/* ---- Bringing laptops back ---- */}
+            <fieldset className="field" aria-invalid={!!errors.returningLaptops}>
+              <legend className="label">Are you bringing back any laptops?<span className="req">*</span></legend>
+              <div className="choices">
+                {[['Yes', true], ['No', false]].map(([text, val]) => (
+                  <label key={text} className={`choice ${form.returningLaptops === val ? 'on' : ''}`}>
+                    <input type="radio" name="returningLaptops"
+                      checked={form.returningLaptops === val}
+                      onChange={() => setForm({ ...form, returningLaptops: val })} />
+                    {text}
+                  </label>
+                ))}
+              </div>
+              {errors.returningLaptops && <p className="error">{errors.returningLaptops}</p>}
+            </fieldset>
+
+            {form.returningLaptops && (
+              <div className="laptop-box return-box">
+                <Field id="returnedCount" label="How many laptops are you bringing back?"
+                  error={errors.returnedCount}>
+                  <input id="returnedCount" type="number" inputMode="numeric" min={1} max={50}
+                    className="count-input" value={form.returnedCount}
+                    onChange={(ev) => {
+                      const returnedCount = ev.target.value;
+                      // "Some need repair" is not an option for one laptop, so clear it
+                      const returnedCondition =
+                        returnedCount === '1' && form.returnedCondition === 'some_need_repair'
+                          ? '' : form.returnedCondition;
+                      setForm({ ...form, returnedCount, returnedCondition });
+                    }}
+                    aria-invalid={!!errors.returnedCount} />
+                </Field>
+
+                <fieldset className="field" aria-invalid={!!errors.returnedCondition}>
+                  <legend className="label">
+                    {form.returnedCount === '1' ? 'Does the laptop work?' : 'Do the laptops work?'}
+                    <span className="req">*</span>
+                  </legend>
+                  <p className="hint">Choose "needs repair" for anything wrong: screen, keyboard, battery, charger, won't turn on.</p>
+                  <div className="choices">
+                    {(form.returnedCount === '1'
+                      ? [['It works', 'all_working'], ['It needs repair', 'all_need_repair']]
+                      : [['All working', 'all_working'], ['Some need repair', 'some_need_repair'],
+                         ['All need repair', 'all_need_repair']]
+                    ).map(([text, val]) => (
+                      <label key={val} className={`choice ${form.returnedCondition === val ? 'on' : ''}`}>
+                        <input type="radio" name="returnedCondition"
+                          checked={form.returnedCondition === val}
+                          onChange={() => setForm({ ...form, returnedCondition: val })} />
+                        {text}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.returnedCondition && <p className="error">{errors.returnedCondition}</p>}
+                </fieldset>
+
+                {form.returnedCondition && form.returnedCondition !== 'all_working' && (
+                  <div className="field">
+                    <label className="label" htmlFor="repairNotes">What needs fixing? (optional)</label>
+                    <p className="hint">Helps IT prepare the repair.</p>
+                    <textarea id="repairNotes" rows={2} maxLength={2000}
+                      value={form.repairNotes} onChange={set('repairNotes')} />
+                  </div>
+                )}
               </div>
             )}
 

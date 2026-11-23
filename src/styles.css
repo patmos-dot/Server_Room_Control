@@ -27,6 +27,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Returned laptops section */
+.choices { flex-wrap: wrap; }
+.return-box { border-left-color: var(--blue); background: #f2f9fd; }
+.count-input {
+  width: 110px; font: inherit; font-size: 16px; color: var(--ink);
+  border: 1.5px solid var(--line); border-radius: 8px; padding: 12px 14px; outline: none;
+}
+
 .page { min-height: 100vh; padding: 28px 14px 40px; display: flex; justify-content: center; }
 .card {
   width: 100%; max-width: 640px; background: #fff;
